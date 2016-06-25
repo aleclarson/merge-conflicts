@@ -61,6 +61,7 @@ class SideView extends CoveringView
   useMe: ->
     @editor.transact =>
       @side.resolve()
+      atom.commands.dispatch @editor.element, "merge-conflicts:next-unresolved"
     @decorate()
 
   revert: ->
