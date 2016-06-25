@@ -38,7 +38,7 @@ class ConflictedEditor
     for c in @conflicts
       @coveringViews.push new SideView(c.ours, @editor)
       @coveringViews.push new SideView(c.base, @editor) if c.base?
-      @coveringViews.push new NavigationView(c.navigator, @editor)
+      @coveringViews.push new NavigationView(c, @editor)
       @coveringViews.push new SideView(c.theirs, @editor)
 
       @subs.add c.onDidResolveConflict =>
@@ -176,7 +176,7 @@ class ConflictedEditor
     return unless @editor is atom.workspace.getActiveTextEditor()
     final = _.last @active()
     if final?
-      n = final.conflict.navigator.nextUnresolved()
+      n = final.conflict.nextConflict
       @focusConflict(n) if n?
     else
       orderedCursors = _.sortBy @editor.getCursors(), (c) ->
@@ -193,7 +193,7 @@ class ConflictedEditor
       return unless firstAfter?
 
       if firstAfter.isResolved()
-        target = firstAfter.navigator.nextUnresolved()
+        target = firstAfter.nextConflict
       else
         target = firstAfter
       return unless target?
@@ -208,7 +208,7 @@ class ConflictedEditor
     return unless @editor is atom.workspace.getActiveTextEditor()
     initial = _.first @active()
     if initial?
-      p = initial.conflict.navigator.previousUnresolved()
+      p = initial.conflict.prevConflict
       @focusConflict(p) if p?
     else
       orderedCursors = _.sortBy @editor.getCursors(), (c) ->
@@ -225,7 +225,7 @@ class ConflictedEditor
       return unless lastBefore?
 
       if lastBefore.isResolved()
-        target = lastBefore.navigator.previousUnresolved()
+        target = lastBefore.prevConflict
       else
         target = lastBefore
       return unless target?

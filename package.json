@@ -652,7 +652,6 @@
         "lib/conflicted-editor.coffee",
         "lib/main.coffee",
         "lib/merge-state.coffee",
-        "lib/navigator.coffee",
         "lib/side.coffee",
         "lib/view/covering-view.coffee",
         "lib/view/error-view.coffee",

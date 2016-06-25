@@ -3,14 +3,14 @@
 
 class NavigationView extends CoveringView
 
-  @content: (navigator, editor) ->
+  @content: ->
     @div class: 'controls navigation', =>
       @text ' '
       @span class: 'pull-right', =>
         @button class: 'btn btn-xs', click: 'up', outlet: 'prevBtn', 'prev'
         @button class: 'btn btn-xs', click: 'down', outlet: 'nextBtn', 'next'
 
-  initialize: (@navigator, editor) ->
+  initialize: (@conflict, editor) ->
     @subs = new CompositeDisposable
 
     super editor
@@ -18,7 +18,7 @@ class NavigationView extends CoveringView
     @prependKeystroke 'merge-conflicts:previous-unresolved', @prevBtn
     @prependKeystroke 'merge-conflicts:next-unresolved', @nextBtn
 
-    @subs.add @navigator.conflict.onDidResolveConflict =>
+    @subs.add @conflict.onDidResolveConflict =>
       @deleteMarker @cover()
       @remove()
       @cleanup()
@@ -27,15 +27,19 @@ class NavigationView extends CoveringView
     super
     @subs.dispose()
 
-  cover: -> @navigator.separatorMarker
+  cover: -> @conflict.separatorMarker
 
-  up: -> @scrollTo @navigator.previousUnresolved()?.scrollTarget()
+  up: ->
+    { prevConflict } = @conflict
+    return if not prevConflict
+    @scrollTo prevConflict.scrollTarget()
 
-  down: -> @scrollTo @navigator.nextUnresolved()?.scrollTarget()
+  down: ->
+    { nextConflict } = @conflict
+    return if not nextConflict
+    @scrollTo nextConflict.scrollTarget()
 
-  conflict: -> @navigator.conflict
-
-  toString: -> "{NavView of: #{@conflict()}}"
+  toString: -> "{NavView of: #{@conflict}}"
 
 module.exports =
   NavigationView: NavigationView
