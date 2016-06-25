@@ -7,13 +7,13 @@ class NavigationView extends CoveringView
     @div class: 'controls navigation', =>
       @text ' '
       @span class: 'pull-right', =>
-        @button class: 'btn btn-xs', click: 'up', outlet: 'prevBtn', 'prev'
-        @button class: 'btn btn-xs', click: 'down', outlet: 'nextBtn', 'next'
+        @button class: 'btn btn-xs previous-unresolved', click: 'up', outlet: 'prevBtn', 'prev'
+        @button class: 'btn btn-xs next-unresolved', click: 'down', outlet: 'nextBtn', 'next'
 
   initialize: (@conflict, editor) ->
     @subs = new CompositeDisposable
 
-    super editor
+    super editor, 'navigation-overlay'
 
     @prependKeystroke 'merge-conflicts:previous-unresolved', @prevBtn
     @prependKeystroke 'merge-conflicts:next-unresolved', @nextBtn

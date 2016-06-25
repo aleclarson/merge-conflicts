@@ -5,10 +5,11 @@ _ = require 'underscore-plus'
 
 class CoveringView extends View
 
-  initialize: (@editor) ->
+  initialize: (@editor, overlayClass) ->
     @coverSubs = new CompositeDisposable
     @overlay = @editor.decorateMarker @cover(),
       type: 'overlay',
+      class: overlayClass,
       item: this,
       position: 'tail'
 
