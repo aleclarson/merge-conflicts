@@ -63,8 +63,6 @@ class MergeConflictsView extends View
     repoPath = element.find(".path").text()
     fullPath = @state.join repoPath
     atom.workspace.open(fullPath)
-    .then (editor) ->
-      atom.commands.dispatch editor, 'merge-conflicts:next-unresolved'
 
   minimize: ->
     @addClass 'minimized'
@@ -171,6 +169,8 @@ class MergeConflictsView extends View
 
     @instance.subs.add atom.workspace.observeTextEditors (editor) =>
       @markConflictsIn state, editor, pkg
+      resetCursor = -> editor.scrollToCursorPosition()
+      setTimeout resetCursor, 0
 
   @markConflictsIn: (state, editor, pkg) ->
     return if state.isEmpty()
