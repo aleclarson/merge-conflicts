@@ -63,6 +63,8 @@ class MergeConflictsView extends View
     repoPath = element.find(".path").text()
     fullPath = @state.join repoPath
     atom.workspace.open(fullPath)
+    .then (editor) ->
+      atom.commands.dispatch editor, 'merge-conflicts:next-unresolved'
 
   minimize: ->
     @addClass 'minimized'
