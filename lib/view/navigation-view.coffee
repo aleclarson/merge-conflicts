@@ -10,7 +10,7 @@ class NavigationView extends CoveringView
         @button class: 'btn btn-xs previous-unresolved', click: 'up', outlet: 'prevBtn', 'prev'
         @button class: 'btn btn-xs next-unresolved', click: 'down', outlet: 'nextBtn', 'next'
 
-  initialize: (@conflict, editor) ->
+  initialize: (@_conflict, editor) ->
     @subs = new CompositeDisposable
 
     super editor, 'navigation-overlay'
@@ -18,7 +18,7 @@ class NavigationView extends CoveringView
     @prependKeystroke 'merge-conflicts:previous-unresolved', @prevBtn
     @prependKeystroke 'merge-conflicts:next-unresolved', @nextBtn
 
-    @subs.add @conflict.onDidResolveConflict =>
+    @subs.add @_conflict.onDidResolveConflict =>
       @deleteMarker @cover()
       @remove()
       @cleanup()
@@ -27,19 +27,21 @@ class NavigationView extends CoveringView
     super
     @subs.dispose()
 
-  cover: -> @conflict.separatorMarker
+  cover: -> @_conflict.separatorMarker
+
+  conflict: -> @_conflict
 
   up: ->
-    { prevConflict } = @conflict
+    { prevConflict } = @_conflict
     return if not prevConflict
     @scrollTo prevConflict.scrollTarget()
 
   down: ->
-    { nextConflict } = @conflict
+    { nextConflict } = @_conflict
     return if not nextConflict
     @scrollTo nextConflict.scrollTarget()
 
-  toString: -> "{NavView of: #{@conflict}}"
+  toString: -> "{NavView of: #{@_conflict}}"
 
 module.exports =
   NavigationView: NavigationView
