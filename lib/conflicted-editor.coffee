@@ -6,7 +6,7 @@ _ = require 'underscore-plus'
 
 {SideView} = require './view/side-view'
 {NavigationView} = require './view/navigation-view'
-{ResolverView} = require './view/resolver-view'
+# {ResolverView} = require './view/resolver-view'
 
 # Public: Mediate conflict-related decorations and events on behalf of a specific TextEditor.
 #
@@ -103,7 +103,7 @@ class ConflictedEditor
   # Private: Event handler invoked when all conflicts in this file have been resolved.
   #
   conflictsResolved: ->
-    atom.workspace.addTopPanel item: new ResolverView(@editor, @state, @pkg)
+    # atom.workspace.addTopPanel item: new ResolverView(@editor, @state, @pkg)
 
   detectDirty: ->
     # Only detect dirty regions within CoveringViews that have a cursor within them.
