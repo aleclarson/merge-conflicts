@@ -51,8 +51,17 @@ class CoveringView extends View
     @buffer().delete marker.getBufferRange()
     marker.destroy()
 
-  scrollTo: (positionOrNull) ->
-    @editor.setCursorBufferPosition positionOrNull if positionOrNull?
+  scrollTo: (position) ->
+    return if position is undefined
+    cursor = @editor.cursors[0].marker
+    prevPos = cursor.getStartScreenPosition()
+    @editor.setCursorBufferPosition position
+    return if position is null
+    nextPos = cursor.getStartScreenPosition()
+    if prevPos.row < nextPos.row
+      @editor.scrollToScreenPosition [ nextPos.row + 10, 0 ]
+    else
+      @editor.scrollToScreenPosition [ nextPos.row - 7, 0 ]
 
   prependKeystroke: (eventName, element) ->
     bindings = atom.keymaps.findKeyBindings command: eventName

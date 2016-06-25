@@ -274,9 +274,18 @@ class ConflictedEditor
   # conflict [Conflict] Any conflict within the current editor.
   #
   focusConflict: (conflict) ->
-    st = conflict.ours.marker.getBufferRange().start
-    @editor.scrollToBufferPosition st, center: true
-    @editor.setCursorBufferPosition st, autoscroll: false
+
+    cursor = @editor.cursors[0].marker
+    prevRow = cursor.getStartScreenPosition().row
+
+    { start } = conflict.ours.marker.getBufferRange()
+    @editor.setCursorBufferPosition start, autoscroll: false
+
+    nextRow = cursor.getStartScreenPosition().row
+    if nextRow > prevRow
+      nextRow += 10
+    else nextRow -= 7
+    @editor.scrollToScreenPosition [ nextRow, 0 ]
 
 module.exports =
   ConflictedEditor: ConflictedEditor
