@@ -77,6 +77,7 @@ class ConflictedEditor
       'merge-conflicts:accept-theirs': => @acceptTheirs(),
       'merge-conflicts:ours-then-theirs': => @acceptOursThenTheirs(),
       'merge-conflicts:theirs-then-ours': => @acceptTheirsThenOurs(),
+      'merge-conflicts:first-unresolved': => @firstUnresolved(),
       'merge-conflicts:next-unresolved': => @nextUnresolved(),
       'merge-conflicts:previous-unresolved': => @previousUnresolved(),
       'merge-conflicts:revert-current': => @revertCurrent()
@@ -167,6 +168,11 @@ class ConflictedEditor
     @editor.transact =>
       for side in @active()
         @combineSides side.conflict.theirs, side.conflict.ours
+
+  firstUnresolved: ->
+    return unless @editor is atom.workspace.getActiveTextEditor()
+    c = @conflicts[0]
+    @focusConflict c if c?
 
   # Private: Command that navigates to the next unresolved conflict in the editor.
   #
