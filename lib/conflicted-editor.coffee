@@ -180,31 +180,25 @@ class ConflictedEditor
   #
   nextUnresolved: ->
     return unless @editor is atom.workspace.getActiveTextEditor()
-    final = _.last @active()
-    if final?
-      n = final.conflict.nextConflict
-      @focusConflict(n) if n?
-    else
-      orderedCursors = _.sortBy @editor.getCursors(), (c) ->
-        c.getBufferPosition().row
-      lastCursor = _.last orderedCursors
-      return unless lastCursor?
 
-      pos = lastCursor.getBufferPosition()
-      firstAfter = null
-      for c in @conflicts
-        p = c.ours.marker.getBufferRange().start
-        if p.isGreaterThanOrEqual(pos) and not firstAfter?
-          firstAfter = c
-      return unless firstAfter?
+    cursorPosition = null
+    @editor.getCursors().forEach (cursor) ->
+      position = cursor.getBufferPosition()
+      return if cursorPosition and (position.row < cursorPosition.row)
+      cursorPosition = position
 
-      if firstAfter.isResolved()
-        target = firstAfter.nextConflict
-      else
-        target = firstAfter
-      return unless target?
+    return if not cursorPosition
+    for conflict in @conflicts
+      continue if conflict.isResolved()
+      position = conflict.ours.marker.getBufferRange().start
+      continue if not position.isGreaterThan cursorPosition
+      nextConflict = conflict
+      break
 
-      @focusConflict target
+    nextConflict ?= _.last @conflicts
+    return if not nextConflict
+    return if nextConflict.isResolved()
+    @focusConflict nextConflict
 
   # Private: Command that navigates to the previous unresolved conflict in the editor.
   #
@@ -212,31 +206,24 @@ class ConflictedEditor
   #
   previousUnresolved: ->
     return unless @editor is atom.workspace.getActiveTextEditor()
-    initial = _.first @active()
-    if initial?
-      p = initial.conflict.prevConflict
-      @focusConflict(p) if p?
-    else
-      orderedCursors = _.sortBy @editor.getCursors(), (c) ->
-        c.getBufferPosition().row
-      firstCursor = _.first orderedCursors
-      return unless firstCursor?
 
-      pos = firstCursor.getBufferPosition()
-      lastBefore = null
-      for c in @conflicts
-        p = c.ours.marker.getBufferRange().start
-        if p.isLessThanOrEqual pos
-          lastBefore = c
-      return unless lastBefore?
+    cursorPosition = null
+    @editor.getCursors().forEach (cursor) ->
+      position = cursor.getBufferPosition()
+      return if cursorPosition and (position.row > cursorPosition.row)
+      cursorPosition = position
 
-      if lastBefore.isResolved()
-        target = lastBefore.prevConflict
-      else
-        target = lastBefore
-      return unless target?
+    return if not cursorPosition
+    for conflict in @conflicts
+      continue if conflict.isResolved()
+      position = conflict.ours.marker.getBufferRange().start
+      break if not position.isLessThan cursorPosition
+      prevConflict = conflict
 
-      @focusConflict target
+    prevConflict ?= _.first @conflicts
+    return if not prevConflict
+    return if prevConflict.isResolved()
+    @focusConflict prevConflict
 
   # Private: Revert manual edits to the current side of the active conflict.
   #
@@ -280,17 +267,9 @@ class ConflictedEditor
   # conflict [Conflict] Any conflict within the current editor.
   #
   focusConflict: (conflict) ->
-
-    prevRow = @editor.cursors[0].marker.getStartScreenPosition().row
-    nextRow = conflict.ours.marker.getBufferRange().start.row
-
-    screenPos = nextRow
-    if nextRow > prevRow
-      screenPos += 10
-    else screenPos -= 7
-
-    @editor.setCursorBufferPosition [ nextRow, 0 ], autoscroll: false
-    @editor.scrollToScreenPosition [ screenPos, 0 ]
+    { row } = conflict.ours.marker.getBufferRange().start
+    @editor.setCursorBufferPosition [ row, 0 ]
+    @editor.setFirstVisibleScreenRow row - Math.floor(@editor.rowsPerPage / 2)
 
 module.exports =
   ConflictedEditor: ConflictedEditor
