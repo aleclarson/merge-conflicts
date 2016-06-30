@@ -7,20 +7,36 @@
 .conflict-ours {
   margin-right: 15px;
   background: @ours-line-color;
-  &.cursor-line { background: @ours-current-color; }
+
+  &.cursor-line {
+    background: @ours-current-color;
+  }
+
+  // &::before {
+  //   z-index: -2;
+  //   background: #fff;
+  //   width: 100%;
+  //   height: 2px;
+  // }
 }
 
 .conflict-theirs {
   margin-right: 15px;
   background: @theirs-line-color;
-  &.cursor-line { background: @theirs-current-color; }
+
+  &.cursor-line {
+    background: @theirs-current-color;
+  }
 }
 
-// .conflict-base {
-//   margin-right: 15px;
-//   background: @base-line-color;
-//   &.cursor-line { background: @base-current-color; }
-// }
+.conflict-base {
+  margin-right: 15px;
+  background: @base-line-color;
+
+  &.cursor-line {
+    background: @base-current-color;
+  }
+}
 
 .conflict-dirty {
   margin-right: 15px;
