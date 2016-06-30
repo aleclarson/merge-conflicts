@@ -61,6 +61,7 @@ class SideView extends CoveringView
   useMe: ->
     @editor.transact => @side.resolve()
     @decorate()
+    @editor.element.focus()
 
   revert: ->
     @editor.setTextInBufferRange @side.marker.getBufferRange(), @side.originalText
