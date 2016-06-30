@@ -59,7 +59,6 @@ class SideView extends CoveringView
     t.isLessThanOrEqual(p) and h.isGreaterThanOrEqual(p)
 
   useMe: ->
-    atom.commands.dispatch @editor.element, "merge-conflicts:next-unresolved"
     @editor.transact => @side.resolve()
     @decorate()
 
