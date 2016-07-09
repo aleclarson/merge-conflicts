@@ -269,7 +269,9 @@ class ConflictedEditor
   focusConflict: (conflict) ->
     { row } = conflict.ours.marker.getBufferRange().start
     @editor.setCursorBufferPosition [ row, 0 ]
-    @editor.setFirstVisibleScreenRow row - Math.floor(@editor.rowsPerPage / 2)
+    { rowsPerPage } = @editor
+    rowsPerPage = 10 if Number.isNaN rowsPerPage
+    @editor.setFirstVisibleScreenRow row - Math.floor(rowsPerPage / 2)
 
 module.exports =
   ConflictedEditor: ConflictedEditor
