@@ -116,8 +116,14 @@ class MergeConflictsView extends View
     repoPath = element.closest('li').data('path')
     filePath = @state.join repoPath
 
-    for e in atom.workspace.getTextEditors()
-      e.save() if e.getPath() is filePath
+    # Save and quit the file's editor.
+    for editor in atom.workspace.getTextEditors()
+      continue if editor.getPath() isnt filePath
+      saveListener = editor.onDidSave ->
+        editor.destroy()
+        saveListener.dispose()
+      editor.save()
+      break
 
     @state.context.resolveFile(repoPath)
     .then =>
